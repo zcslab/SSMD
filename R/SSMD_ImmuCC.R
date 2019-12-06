@@ -1,9 +1,25 @@
-setwd('/Users/xiaoyulu/Documents/RA/NEW/201811_NMF/Pipeline/New Server')
 
-source("/Users/xiaoyulu/Documents/RA/NEW/201811_NMF/Pipeline/New Server/SSMD find module.R")
-source('/Users/xiaoyulu/Documents/RA/NEW/201811_NMF/Pipeline/New Server/RMThreshold.R')
-source("/Users/xiaoyulu/Documents/RA/NEW/201811_NMF/Pipeline/New Server/CIBERSORT_modified.R")
+# source("/Users/xiaoyulu/Documents/RA/NEW/201811_NMF/Pipeline/New Server/SSMD find module.R")
+# source('/Users/xiaoyulu/Documents/RA/NEW/201811_NMF/Pipeline/New Server/RMThreshold.R')
+# source("/Users/xiaoyulu/Documents/RA/NEW/201811_NMF/Pipeline/New Server/CIBERSORT_modified.R")
+# 
+# load('/Users/xiaoyulu/Documents/RA/NEW/201811_NMF/Pipeline/New Server/SSMD_ImmuCC_core_markers.RData')
+# load('/Users/xiaoyulu/Documents/RA/NEW/201811_NMF/Pipeline/New Server/SSMD_ImmuCC_labeling_genes.RData')
+# load('/Users/xiaoyulu/Documents/RA/NEW/201811_NMF/Pipeline/New Server/ImmuCC_sig_matrix.RData')
 
+.onLoad <- function(libname, pkgname) {
+  utils::data(labeling_matrix, package = pkgname, envir = parent.env(environment()))
+  SSMD_ImmuCC_core_markers <- SSMD::SSMD_ImmuCC_core_markers
+  assign("SSMD_ImmuCC_core_markers", SSMD_ImmuCC_core_markers, envir = parent.env(environment()))
+  
+  utils::data(SSMD_ImmuCC_labeling_genes, package = pkgname, envir = parent.env(environment()))
+  SSMD_ImmuCC_labeling_genes <- SSMD::SSMD_ImmuCC_labeling_genes
+  assign("SSMD_ImmuCC_labeling_genes", SSMD_ImmuCC_labeling_genes, envir = parent.env(environment()))
+  
+  utils::data(original_sig_matrix, package = pkgname, envir = parent.env(environment()))
+  original_sig_matrix <- SSMD::original_sig_matrix
+  assign("original_sig_matrix", original_sig_matrix, envir = parent.env(environment()))
+}
 
 ##############################
 #ImmuCC
@@ -29,42 +45,47 @@ ImmuCC <- function(sig_matrix, mixture_file){
 # original_sig_matrix<- read.table(training_data,header=T,sep="\t",row.names=1,check.names=F)
 # save(original_sig_matrix,file='ImmuCC_sig_matrix.RData')
 
-expression='/Users/xiaoyulu/Documents/RA/NEW/201811_NMF/Pipeline/New Server/SmallIntestine.txt'
-expression_data=read.table(expression)
+# expression='/Users/xiaoyulu/Documents/RA/NEW/201811_NMF/Pipeline/New Server/SmallIntestine.txt'
+# expression_data=read.table(expression)
 
-SSMD=SSMD_find_module(expression_data)
-
-SSMD_module=SSMD
-
-###############
-SSMD_modules_plain <- list()
-nn <- c()
-N <- 0
-for (i in 1:length(SSMD_module)) {
-  for (j in 1:length(SSMD_module[[i]])) {
-    N <- N + 1
-    SSMD_modules_plain[[N]] <- SSMD_module[[i]][[j]]
+SSMD_ImmuCC <- function(data11) {
+  
+  
+  SSMD=SSMD_find_module(expression_data)
+  
+  SSMD_module=SSMD
+  
+  ###############
+  SSMD_modules_plain <- list()
+  nn <- c()
+  N <- 0
+  for (i in 1:length(SSMD_module)) {
+    for (j in 1:length(SSMD_module[[i]])) {
+      N <- N + 1
+      SSMD_modules_plain[[N]] <- SSMD_module[[i]][[j]]
+    }
+    nn <- c(nn, names(SSMD_module[[i]]))
   }
-  nn <- c(nn, names(SSMD_module[[i]]))
+  names(SSMD_modules_plain) <- nn
+  
+  #########
+  SSMD_gene=c()
+  for (i in 1:length(SSMD_modules_plain)) {
+    SSMD_gene=c(SSMD_gene,SSMD_modules_plain[[i]])
+  }
+  
+  # library(VennDiagram)
+  # 
+  # venn.diagram(x = list(ImmuCC = row.names(original_sig_matrix),SSMD = SSMD_core_marker), filename = "venn",
+  #              main = 'Genes', cex = 2, cat.cex = 1.3,fill = c("orange","violet"))
+  
+  aaa=intersect(rownames(original_sig_matrix),SSMD_gene)
+  modify_sig_matrix=original_sig_matrix[aaa,]
+  
+  ImmuCC.proportion_modify <- ImmuCC (modify_sig_matrix,expression_data)
+  
+  #ImmuCC.proportion_original <- ImmuCC (original_sig_matrix,expression_data)
+  #save(Immune.proportion,file='/Users/xiaoyulu/Documents/RA/NEW/201811_NMF/Pipeline/testing data/ImmunCC/new_ImmuCC_1003/newImmuCC_SmallIntestine.RData')
+  return(ImmuCC.proportion_modify)
 }
-names(SSMD_modules_plain) <- nn
-
-#########
-SSMD_gene=c()
-for (i in 1:length(SSMD_modules_plain)) {
-  SSMD_gene=c(SSMD_gene,SSMD_modules_plain[[i]])
-}
-
-# library(VennDiagram)
-# 
-# venn.diagram(x = list(ImmuCC = row.names(original_sig_matrix),SSMD = SSMD_core_marker), filename = "venn",
-#              main = 'Genes', cex = 2, cat.cex = 1.3,fill = c("orange","violet"))
-
-aaa=intersect(rownames(original_sig_matrix),SSMD_gene)
-modify_sig_matrix=original_sig_matrix[aaa,]
-
-ImmuCC.proportion_modify <- ImmuCC (modify_sig_matrix,expression_data)
-
-#ImmuCC.proportion_original <- ImmuCC (original_sig_matrix,expression_data)
-#save(Immune.proportion,file='/Users/xiaoyulu/Documents/RA/NEW/201811_NMF/Pipeline/testing data/ImmunCC/new_ImmuCC_1003/newImmuCC_SmallIntestine.RData')
 

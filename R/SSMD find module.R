@@ -3,9 +3,9 @@ library(bcv)
 #load('/Users/xiaoyulu/Documents/RA/NEW/201811_NMF/Pipeline/testing data/weight core marker top10/Mouse_top10_core_markers.RData')
 #load('/Users/xiaoyulu/Documents/RA/NEW/201811_NMF/Pipeline/testing data/Deconv_example/IM_markers_20190302_mouse.RData')
 #load('/Users/xiaoyulu/Documents/RA/NEW/201811_NMF/Pipeline/testing data/Deconv_example/2019_06_25_coremarker_selected.RData')
-load('/Users/xiaoyulu/Documents/RA/NEW/201811_NMF/Pipeline/New Server/SSMD_ImmuCC_core_markers.RData')
-load('/Users/xiaoyulu/Documents/RA/NEW/201811_NMF/Pipeline/New Server/SSMD_ImmuCC_labeling_genes.RData')
-load('/Users/xiaoyulu/Documents/RA/NEW/201811_NMF/Pipeline/New Server/ImmuCC_sig_matrix.RData')
+#load('/Users/xiaoyulu/Documents/RA/NEW/201811_NMF/Pipeline/New Server/SSMD_ImmuCC_core_markers.RData')
+#load('/Users/xiaoyulu/Documents/RA/NEW/201811_NMF/Pipeline/New Server/SSMD_ImmuCC_labeling_genes.RData')
+#load('/Users/xiaoyulu/Documents/RA/NEW/201811_NMF/Pipeline/New Server/ImmuCC_sig_matrix.RData')
 
 SSMD_find_module <- function(data11) {
   
