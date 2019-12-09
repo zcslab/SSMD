@@ -82,7 +82,9 @@ SSMD_ImmuCC <- function(data11) {
 }
 
 
-# expression='/Users/xiaoyulu/Documents/RA/NEW/201811_NMF/Pipeline/New Server/SmallIntestine.txt'
-# expression_data=read.table(expression)
-# example_result=SSMD_ImmuCC(expression_data)
+
+
+expression='/Users/xiaoyulu/Documents/RA/NEW/201811_NMF/Pipeline/New Server/SmallIntestine.txt'
+expression_data=read.table(expression)
+example_result=SSMD_ImmuCC(expression_data)
 
