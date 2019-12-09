@@ -12,14 +12,14 @@
 # Windows users using the R GUI may need to Run as Administrator to install or update packages.
 # This script uses 3 parallel processes.  Since Windows does not support forking, this script will run
 # single-threaded in Windows.
-#
+# 
 # Usage:
 #       Navigate to directory containing R script
-#
+# 
 #   In R:
 #       source('CIBERSORT.R')
 #       results <- CIBERSORT('sig_matrix_file.txt','mixture_file.txt', perm, QN, absolute, abs_method)
-#
+# 
 #       Options:
 #       i)   perm = No. permutations; set to >=100 to calculate p-values (default = 0)
 #       ii)  QN = Quantile normalization of input mixture (default = TRUE)
@@ -34,7 +34,7 @@
 #                 level of all genes in the signature matrix divided by the median expression
 #                 level of all genes in the mixture. Multiple cell subset fractions by S.
 #               - no.sumto1 = remove sum to 1 constraint
-#
+# 
 # Input: signature matrix and mixture file, formatted as specified at http://cibersort.stanford.edu/tutorial.php
 # Output: matrix object containing all results and tabular data written to disk 'CIBERSORT-Results.txt'
 # License: http://cibersort.stanford.edu/CIBERSORT_License.txt
@@ -43,13 +43,11 @@
 #       results <- CIBERSORT('sig_matrix_file.txt','mixture_file.txt', perm, QN, absolute, abs_method)
 
 #dependencies
-library(e1071)
-library(parallel)
-library(preprocessCore)
 
 #Core algorithm
 CoreAlg <- function(X, y, absolute, abs_method){
-    
+
+  
     #try different values of nu
     svn_itor <- 3
     
@@ -129,6 +127,9 @@ doPerm <- function(perm, X, Y, absolute, abs_method){
 
 #main function
 CIBERSORT <- function(sig_matrix, mixture_file, perm=0, QN=TRUE, absolute=FALSE, abs_method='sig.score'){
+  library(e1071)
+  library(parallel)
+  library(preprocessCore)
     
     if(absolute && abs_method != 'no.sumto1' && abs_method != 'sig.score') stop("abs_method must be set to either 'sig.score' or 'no.sumto1'")
     
