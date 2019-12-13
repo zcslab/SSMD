@@ -1,4 +1,15 @@
-SSMD_find_module <- function(data11) {
+.onLoad <- function(libname, pkgname) {
+  utils::data(labeling_matrix, package = pkgname, envir = parent.env(environment()))
+  marker_stats1_uni <- SSMD::marker_stats1_uni
+  assign("marker_stats1_uni", marker_stats1_uni, envir = parent.env(environment()))
+  
+  utils::data(Core_marker_list, package = pkgname, envir = parent.env(environment()))
+  Mouse_core_markers_merged <- SSMD::Mouse_core_markers_merged
+  assign("Mouse_core_markers_merged", Mouse_core_markers_merged, envir = parent.env(environment()))
+}
+
+
+estimate.proportion <- function(data11) {
   
   BCV_ttest2 <- function(data0, rounds = 20, slice0 = 2, maxrank0 = 4, msep_cut = 0.01) {
     x <- data0
@@ -37,8 +48,6 @@ SSMD_find_module <- function(data11) {
       ccc <- stats::cor(cc, t(tg_data_c))
       if (mean(ccc) < 0) {
         cc <- -cc
-      }else{
-        cc <- cc
       }
       Base_all <- rbind(Base_all, cc)
     }
@@ -51,21 +60,22 @@ SSMD_find_module <- function(data11) {
   
   
   ##################
-  tg_core_marker_set=SSMD_ImmuCC_core_markers
-  #tg_core_marker_set=Mouse_core_markers_merged
+  tg_core_marker_set=Mouse_core_markers_merged
   cell_type = names(tg_core_marker_set)
   i = 1
   intersect_marker1 = vector("list")
   for (cell in cell_type) {
     name = cell
-    tg_marker=SSMD_ImmuCC_labeling_genes[[cell]]
+    if (cell == "T") {
+      tg_marker <- names(which(marker_stats1_uni[, "CD4T"] >= 1 | marker_stats1_uni[, "CD8T"] >= 1 | marker_stats1_uni[, "T"] >= 1))
+    } else {
+      tg_marker <- names(which((marker_stats1_uni[, cell] >= 1)))
+    }
     intersect_marker1[[i]] = intersect(tg_marker, rownames(data11))
-    #intersect_marker1[[i]] = tg_marker
     names(intersect_marker1)[[i]] = name
     i = i + 1
   }
-  #SSMD_labeling_genes=intersect_marker1
-  #save(SSMD_labeling_genes,file='SSMD_labeling_genes.RData')
+  
   #######################
   intersect_marker1_choose = vector("list", length = length(intersect_marker1))
   for (i in 1:length(intersect_marker1)) {
@@ -220,14 +230,31 @@ SSMD_find_module <- function(data11) {
   for (module_cell in unique(Stat_all$CT)) {
     aaa = Stat_all[which(Stat_all$CT == module_cell), ]
     bbb = aaa$ID[which((aaa$Core_overlap_number == max(max(unlist(aaa$Core_overlap_number)),2))|(aaa$Core_overlap_number>=10)
-                       |((aaa$Core_overlap_number>=4)&(aaa$Core_overlap_rate>=0.5)))]
+                       |((aaa$Core_overlap_number>=5)&(aaa$Core_overlap_rate>=0.5)))]
     module_keep[[j]] =marker_modules_plain[which(names(marker_modules_plain) %in% bbb)]
     j = j + 1
   }
-  module_keep[sapply(module_keep, is.null)] = NULL
+  #module_keep[sapply(module_keep, is.null)] = NULL
   
-  list( module_keep = module_keep)
   
+  # aaa <- Compute_Rbase_SVD(data11, module_keep) get propotion for selected modules
+  proportion = vector("list")
+  for (i in 1:length(module_keep)) {
+    # name=colnames(marker_stats1_uni)[i] print(name)
+    if (length(module_keep[[i]]) > 0) {
+      my_list <- list()
+      my_list <- module_keep[[i]]
+      ###### aaa is base: estimated propotion
+      aaa <- Compute_Rbase_SVD(data11, my_list)
+      rownames(aaa) = sapply(rownames(aaa), function(y) strsplit(y, split = "_")[[1]][[1]])
+      proportion[[i]] = aaa
+      names(proportion)[i] = sapply(rownames(aaa), function(y) strsplit(y, split = "_")[[1]][[1]])
+      # dim(aaa) dim(tProp) correlation between estimated and true propotion ccc <- cor(t(aaa),t(tProp)) modules_cor_tPro[[i]]=ccc print(ccc)
+    } else {
+      print("NO Marker")
+    }
+  }
+  list(Stat_all = Stat_all, module_keep = module_keep, proportion = proportion)
 }
 
 

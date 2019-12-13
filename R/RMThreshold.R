@@ -1,4 +1,3 @@
-
 ## Check input random matrix for sparseness, rank, symmetry, ... and create diagnostic plots
 "rm.matrix.validation" <- 
 function(rand.mat, unfold.method = "gaussian", bandwidth = "nrd0", nr.fit.points = 51, discard.outliers = TRUE) 
