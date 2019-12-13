@@ -12,7 +12,15 @@
   assign("original_sig_matrix", original_sig_matrix, envir = parent.env(environment()))
 }
 
-
+ImmuCC_modify <- function(sig_matrix,mixture_file){
+  
+  # Load the function of CIBERSORT
+  #source("CIBERSORT_modified.R")
+  # Note: the scirpts of CIBERSORT.R is a method developed by Newman et al.and can be accesssed upon an request from https://cibersort.stanford.edu/
+  perm <- 100
+  results <- CIBERSORT(sig_matrix, mixture_file, perm)
+  results
+}
 
 SSMD_ImmuCC <- function(data11) {
   
@@ -39,7 +47,7 @@ SSMD_ImmuCC <- function(data11) {
   aaa=intersect(rownames(original_sig_matrix),SSMD_gene)
   modify_sig_matrix=original_sig_matrix[aaa,]
   
-  ImmuCC.proportion_modify <- ImmuCC (modify_sig_matrix,data11)
+  ImmuCC.proportion_modify <- ImmuCC_modify (modify_sig_matrix,data11)
   return(ImmuCC.proportion_modify)
 }
 
