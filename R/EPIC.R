@@ -5,7 +5,7 @@
   assign("Mouse_human_mapping", Mouse_human_mapping, envir = parent.env(environment()))
 }
 
-EPIC <- function(bulk_data){
+my_EPIC <- function(bulk_data){
   data_c1=bulk_data
   common_gene <- intersect(rownames(data_c1), Mouse_human_mapping[,2])
   data_c2 <- data_c1[common_gene,]
