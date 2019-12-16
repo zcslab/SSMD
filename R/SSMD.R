@@ -1,15 +1,31 @@
 .onLoad <- function(libname, pkgname) {
-  utils::data(labeling_matrix, package = pkgname, envir = parent.env(environment()))
-  marker_stats1_uni <- SSMD::marker_stats1_uni
-  assign("marker_stats1_uni", marker_stats1_uni, envir = parent.env(environment()))
+  utils::data(Mouse_Cancer_labeling_matrix, package = pkgname, envir = parent.env(environment()))
+  Mouse_Cancer_labeling_matrix <- SSMD::Mouse_Cancer_labeling_matrix
+  assign("Mouse_Cancer_labeling_matrix", Mouse_Cancer_labeling_matrix, envir = parent.env(environment()))
   
-  utils::data(Core_marker_list, package = pkgname, envir = parent.env(environment()))
-  Mouse_core_markers_merged <- SSMD::Mouse_core_markers_merged
-  assign("Mouse_core_markers_merged", Mouse_core_markers_merged, envir = parent.env(environment()))
+  utils::data(Mouse_Cancer_core_marker, package = pkgname, envir = parent.env(environment()))
+  Mouse_Cancer_core_marker <- SSMD::Mouse_Cancer_core_marker
+  assign("Mouse_Cancer_core_marker", Mouse_Cancer_core_marker, envir = parent.env(environment()))
+  
+  utils::data(Mouse_hematopoietic_labeling_matrix, package = pkgname, envir = parent.env(environment()))
+  Mouse_hematopoietic_labeling_matrix <- SSMD::Mouse_hematopoietic_labeling_matrix
+  assign("Mouse_hematopoietic_labeling_matrix", Mouse_hematopoietic_labeling_matrix, envir = parent.env(environment()))
+  
+  utils::data(Mouse_hematopoietic_core_marker, package = pkgname, envir = parent.env(environment()))
+  Mouse_hematopoietic_core_marker <- SSMD::Mouse_hematopoietic_core_marker
+  assign("Mouse_hematopoietic_core_marker", Mouse_hematopoietic_core_marker, envir = parent.env(environment()))
+  
+  utils::data(Mouse_Brain_labeling_matrix, package = pkgname, envir = parent.env(environment()))
+  Mouse_Brain_labeling_matrix <- SSMD::Mouse_Brain_labeling_matrix
+  assign("Mouse_Brain_labeling_matrix", Mouse_Brain_labeling_matrix, envir = parent.env(environment()))
+  
+  utils::data(Mouse_Brain_core_marker, package = pkgname, envir = parent.env(environment()))
+  Mouse_Brain_core_marker <- SSMD::Mouse_Brain_core_marker
+  assign("Mouse_Brain_core_marker", Mouse_Brain_core_marker, envir = parent.env(environment()))
 }
 
 
-estimate.proportion <- function(data11) {
+SSMD <- function(data11,tissue) {
   
   BCV_ttest2 <- function(data0, rounds = 20, slice0 = 2, maxrank0 = 4, msep_cut = 0.01) {
     x <- data0
@@ -59,8 +75,19 @@ estimate.proportion <- function(data11) {
   }
   
   
-  ##################
-  tg_core_marker_set=Mouse_core_markers_merged
+  #################
+  if (tissue=='Inflammatory'){
+    tg_core_marker_set=Mouse_Cancer_core_marker
+    marker_stats1_uni=Mouse_Cancer_labeling_matrix
+  }
+  if (tissue=='Central Nervous System'){
+    tg_core_marker_set=Mouse_Brain_core_marker
+    marker_stats1_uni=Mouse_Brain_labeling_matrix
+  }  
+  if (tissue=='Hematopoietic System'){
+    tg_core_marker_set=Mouse_hematopoietic_core_marker
+    marker_stats1_uni=Mouse_hematopoietic_labeling_matrix
+  }
   cell_type = names(tg_core_marker_set)
   i = 1
   intersect_marker1 = vector("list")
