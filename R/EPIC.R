@@ -6,6 +6,8 @@
 }
 
 my_EPIC <- function(bulk_data,cell){
+  library(EPIC)
+  
   if (cell=='blood')
     reference=EPIC::BRef
   if (cell=='immune')
@@ -21,7 +23,6 @@ my_EPIC <- function(bulk_data,cell){
   rownames(data_c2) <- ccc[,1]
   data_c3 <- data_c2[unique(rownames(data_c2)),]
   
-  library(EPIC)
   out <- EPIC(data_c3,reference)
   predict_p <- out[[2]]
   predict_p
