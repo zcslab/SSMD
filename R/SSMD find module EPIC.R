@@ -1,3 +1,21 @@
+.onLoad <- function(libname, pkgname) {
+  utils::data(SSMD_EPIC_Blood_core_markers, package = pkgname, envir = parent.env(environment()))
+  SSMD_EPIC_Blood_core_markers <- SSMD::SSMD_EPIC_Blood_core_markers
+  assign("SSMD_EPIC_Blood_core_markers", SSMD_EPIC_Blood_core_markers, envir = parent.env(environment()))
+  
+  utils::data(SSMD_EPIC_Blood_labeling_genes, package = pkgname, envir = parent.env(environment()))
+  SSMD_EPIC_Blood_labeling_genes <- SSMD::SSMD_EPIC_Blood_labeling_genes
+  assign("SSMD_EPIC_Blood_labeling_genes", SSMD_EPIC_Blood_labeling_genes, envir = parent.env(environment()))
+  
+  utils::data(SSMD_EPIC_Inflammatory_core_markers, package = pkgname, envir = parent.env(environment()))
+  SSMD_EPIC_Inflammatory_core_markers <- SSMD::SSMD_EPIC_Inflammatory_core_markers
+  assign("SSMD_EPIC_Inflammatory_core_markers", SSMD_EPIC_Inflammatory_core_markers, envir = parent.env(environment()))
+  
+  utils::data(SSMD_EPIC_Inflammatory_labeling_genes, package = pkgname, envir = parent.env(environment()))
+  SSMD_EPIC_Inflammatory_labeling_genes <- SSMD::SSMD_EPIC_Inflammatory_labeling_genes
+  assign("SSMD_EPIC_Inflammatory_labeling_genes", SSMD_EPIC_Inflammatory_labeling_genes, envir = parent.env(environment()))
+}
+
 SSMD_find_module_EPIC <- function(data11,tissue) {
   
   BCV_ttest2 <- function(data0, rounds = 20, slice0 = 2, maxrank0 = 4, msep_cut = 0.01) {
