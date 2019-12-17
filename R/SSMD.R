@@ -283,6 +283,7 @@ SSMD <- function(data11,tissue) {
   }
   #list(Stat_all = Stat_all, module_keep = module_keep, proportion = proportion)
   list(predict_p = proportion,sig_gene_list = module_keep)
+  #return(list(SigMat=predict_sig, ProMat=proportion, mk_gene=module_keep))
   
 }
 
