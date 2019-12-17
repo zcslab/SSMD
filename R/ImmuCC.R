@@ -5,13 +5,14 @@
   assign("original_sig_matrix", original_sig_matrix, envir = parent.env(environment()))
 }
 
-ImmuCC <- function(mixture_file){
+ImmuCC <- function(data11){
   
   # Load the function of CIBERSORT
   #source("CIBERSORT_modified.R")
   # Note: the scirpts of CIBERSORT.R is a method developed by Newman et al.and can be accesssed upon an request from https://cibersort.stanford.edu/
   perm <- 100
-  results <- CIBERSORT(original_sig_matrix, mixture_file, perm)
+  results <- CIBERSORT(original_sig_matrix, data11, perm)
+  
   predict_p <- results
   predict_sig = original_sig_matrix
   list(predict_p,predict_sig)
