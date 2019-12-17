@@ -5,15 +5,15 @@
   assign("Mouse_human_mapping", Mouse_human_mapping, envir = parent.env(environment()))
 }
 
-my_EPIC <- function(bulk_data,cell){
+my_EPIC <- function(data11,tissue){
   library(EPIC)
   
-  if (cell=='blood')
+  if (tissue=='Blood')
     reference=EPIC::BRef
-  if (cell=='immune')
+  if (tissue=='Inflammatory')
     reference=EPIC::TRef
 
-  data_c1=bulk_data
+  data_c1=data11
   common_gene <- intersect(rownames(data_c1), Mouse_human_mapping[,2])
   data_c2 <- data_c1[common_gene,]
   human_mouse_mapping2 <- Mouse_human_mapping
@@ -25,5 +25,6 @@ my_EPIC <- function(bulk_data,cell){
   
   out <- EPIC(data_c3,reference)
   predict_p <- out[[2]]
-  predict_p
+  predict_sig = reference$refProfiles[reference$sigGenes,]
+  return(predict_p,predict_sig)
 }

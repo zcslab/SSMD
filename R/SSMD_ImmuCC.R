@@ -1,5 +1,5 @@
 .onLoad <- function(libname, pkgname) {
-  utils::data(labeling_matrix, package = pkgname, envir = parent.env(environment()))
+  utils::data(SSMD_ImmuCC_core_markers, package = pkgname, envir = parent.env(environment()))
   SSMD_ImmuCC_core_markers <- SSMD::SSMD_ImmuCC_core_markers
   assign("SSMD_ImmuCC_core_markers", SSMD_ImmuCC_core_markers, envir = parent.env(environment()))
 
@@ -12,7 +12,7 @@
   assign("original_sig_matrix", original_sig_matrix, envir = parent.env(environment()))
 }
 
-ImmuCC_modify <- function(sig_matrix,mixture_file){
+ImmuCC_modify <- function(mixture_file,sig_matrix){
   
   # Load the function of CIBERSORT
   #source("CIBERSORT_modified.R")
@@ -24,7 +24,7 @@ ImmuCC_modify <- function(sig_matrix,mixture_file){
 
 SSMD_ImmuCC <- function(data11) {
   
-  SSMD_module=SSMD_find_module(data11)[[1]]
+  SSMD_module=SSMD_find_module_ImmuCC(data11)[[1]]
   ###############
   SSMD_modules_plain <- list()
   nn <- c()
@@ -44,11 +44,20 @@ SSMD_ImmuCC <- function(data11) {
     SSMD_gene=c(SSMD_gene,SSMD_modules_plain[[i]])
   }
   
-  aaa=intersect(rownames(original_sig_matrix),SSMD_gene)
-  modify_sig_matrix=original_sig_matrix[aaa,]
+  SSMD_matrix=as.matrix(data11[which(rownames(data11)%in%SSMD_gene),])
+  ImmuCC_original_matrix=data11[which(rownames(data11)%in% rownames(original_sig_matrix) ),]
   
-  ImmuCC.proportion_modify <- ImmuCC_modify (modify_sig_matrix,data11)
-  return(ImmuCC.proportion_modify)
+  cor_matrix=cor(t(ImmuCC_original_matrix),t(SSMD_matrix))
+  cor_matrix[,1]=apply(cor_matrix, 1, function(x) max(x))
+  modify_sig_gene=rownames(cor_matrix)[which(cor_matrix[,1]>0.8)]
+  
+  #aaa=intersect(rownames(original_sig_matrix),SSMD_gene)
+  modify_sig_matrix=original_sig_matrix[modify_sig_gene,]
+  
+  ImmuCC.proportion_modify <- ImmuCC_modify (data11,modify_sig_matrix)
+  predict_p <- ImmuCC.proportion_modify
+  predict_sig = modify_sig_matrix
+  return(predict_p,predict_sig)
 }
 
 
