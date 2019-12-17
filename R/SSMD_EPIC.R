@@ -56,5 +56,5 @@ SSMD_EPIC <- function(data11,tissue) {
   out <- EPIC(data_c3,reference)
   predict_p <- out[[2]]
   predict_sig = reference$refProfiles[reference$sigGenes,]
-  return(predict_p,predict_sig)
+  list(predict_p,predict_sig)
 }

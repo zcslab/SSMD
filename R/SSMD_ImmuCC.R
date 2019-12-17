@@ -57,7 +57,7 @@ SSMD_ImmuCC <- function(data11) {
   ImmuCC.proportion_modify <- ImmuCC_modify (data11,modify_sig_matrix)
   predict_p <- ImmuCC.proportion_modify
   predict_sig = modify_sig_matrix
-  return(predict_p,predict_sig)
+  list(predict_p,predict_sig)
 }
 
 

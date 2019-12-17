@@ -12,5 +12,7 @@ ImmuCC <- function(mixture_file){
   # Note: the scirpts of CIBERSORT.R is a method developed by Newman et al.and can be accesssed upon an request from https://cibersort.stanford.edu/
   perm <- 100
   results <- CIBERSORT(original_sig_matrix, mixture_file, perm)
-  results
+  predict_p <- results
+  predict_sig = original_sig_matrix
+  list(predict_p,predict_sig)
 }
