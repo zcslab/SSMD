@@ -54,7 +54,11 @@ SSMD_EPIC <- function(data11,tissue) {
   reference$sigGenes=rownames(cor_matrix)[which(cor_matrix[,1]>0.8)]
   
   out <- EPIC(data_c3,reference)
-  predict_p <- out[[2]]
-  predict_sig = reference$refProfiles[reference$sigGenes,]
-  list(predict_p,predict_sig)
+  predict_p <- as.matrix(out[[2]])
+  predict_sig = as.matrix(reference$refProfiles[reference$sigGenes,])
+  rownames(predict_sig)=Mouse_human_mapping[rownames(predict_sig),2]
+  LM <- cal_Zscore_small(predict_sig)
+  sig_gene_list <- find_1_genelist(LM)
+  
+  list(predict_p,predict_sig,sig_gene_list)
 }

@@ -55,9 +55,12 @@ SSMD_ImmuCC <- function(data11) {
   modify_sig_matrix=original_sig_matrix[modify_sig_gene,]
   
   ImmuCC.proportion_modify <- ImmuCC_modify (data11,modify_sig_matrix)
-  predict_p <- ImmuCC.proportion_modify
-  predict_sig = modify_sig_matrix
-  list(predict_p,predict_sig)
+  predict_p <- as.matrix(ImmuCC.proportion_modify)
+  predict_sig = as.matrix(modify_sig_matrix)
+  LM <- cal_Zscore_small(predict_sig)
+  sig_gene_list <- find_1_genelist(LM)
+  
+  list(predict_p,predict_sig,sig_gene_list)
 }
 
 

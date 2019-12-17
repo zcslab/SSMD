@@ -12,6 +12,9 @@ ImmuCC <- function(data11){
   results <- CIBERSORT(sig_matrix=original_sig_matrix, mixture_file=data11, perm)
   
   predict_p <- results
-  predict_sig = original_sig_matrix
-  list(predict_p,predict_sig)
+  predict_sig = as.matrix(original_sig_matrix)
+  LM <- cal_Zscore_small(predict_sig)
+  sig_gene_list <- find_1_genelist(LM)
+  
+  list(predict_p,predict_sig,sig_gene_list)
 }
