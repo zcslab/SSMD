@@ -25,7 +25,8 @@ my_EPIC <- function(data11,tissue){
   
   out <- EPIC(data_c3,reference)
   predict_p <- as.matrix(out[[2]])
-  predict_sig = as.matrix(reference$refProfiles[reference$sigGenes,])
+  gene_name=intersect(rownames(Mouse_human_mapping),reference$sigGenes)
+  predict_sig = as.matrix(reference$refProfiles[gene_name,])
   rownames(predict_sig)=Mouse_human_mapping[rownames(predict_sig),2]
   LM <- cal_Zscore_small(predict_sig)
   sig_gene_list <- find_1_genelist(LM)
