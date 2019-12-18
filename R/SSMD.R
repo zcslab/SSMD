@@ -22,6 +22,14 @@
   utils::data(Mouse_Brain_core_marker, package = pkgname, envir = parent.env(environment()))
   Mouse_Brain_core_marker <- SSMD::Mouse_Brain_core_marker
   assign("Mouse_Brain_core_marker", Mouse_Brain_core_marker, envir = parent.env(environment()))
+  
+  utils::data(Mouse_Blood_core_marker, package = pkgname, envir = parent.env(environment()))
+  Mouse_Blood_core_marker <- SSMD::Mouse_Blood_core_marker
+  assign("Mouse_Blood_core_marker", Mouse_Blood_core_marker, envir = parent.env(environment()))
+  
+  utils::data(Mouse_Blood_labeling_matrix, package = pkgname, envir = parent.env(environment()))
+  Mouse_Blood_labeling_matrix <- SSMD::Mouse_Blood_labeling_matrix
+  assign("Mouse_Blood_labeling_matrix", Mouse_Blood_labeling_matrix, envir = parent.env(environment()))
 }
 
 
@@ -88,6 +96,10 @@ SSMD <- function(data11,tissue) {
     tg_core_marker_set=Mouse_hematopoietic_core_marker
     marker_stats1_uni=Mouse_hematopoietic_labeling_matrix
   }
+  if (tissue=='Blood'){
+    tg_core_marker_set=Mouse_Blood_core_marker
+    marker_stats1_uni=Mouse_Blood_labeling_matrix
+  } 
   cell_type = names(tg_core_marker_set)
   i = 1
   intersect_marker1 = vector("list")
@@ -273,7 +285,8 @@ SSMD <- function(data11,tissue) {
       my_list <- module_keep[[i]]
       ###### aaa is base: estimated propotion
       aaa <- Compute_Rbase_SVD(data11, my_list)
-      rownames(aaa) = sapply(rownames(aaa), function(y) strsplit(y, split = "_")[[1]][[1]])
+      colnames(aaa)=colnames(data11)
+      #rownames(aaa) = sapply(rownames(aaa), function(y) strsplit(y, split = "_")[[1]])
       proportion[[i]] = aaa
       names(proportion)[i] = sapply(rownames(aaa), function(y) strsplit(y, split = "_")[[1]][[1]])
       # dim(aaa) dim(tProp) correlation between estimated and true propotion ccc <- cor(t(aaa),t(tProp)) modules_cor_tPro[[i]]=ccc print(ccc)
@@ -281,10 +294,31 @@ SSMD <- function(data11,tissue) {
       print("NO Marker")
     }
   }
-  #list(Stat_all = Stat_all, module_keep = module_keep, proportion = proportion)
-  list(predict_p = proportion,sig_gene_list = module_keep)
-  #return(list(SigMat=predict_sig, ProMat=proportion, mk_gene=module_keep))
   
+  
+  module_keep_plain <- list()
+  nn <- c()
+  N <- 0
+  for (i in 1:length(module_keep)) {
+    if(length(module_keep[[i]])>0){
+      for (j in 1:length(module_keep[[i]])) {
+        N <- N + 1
+        module_keep_plain[[N]] <- module_keep[[i]][[j]]
+      }
+      nn <- c(nn, names(module_keep[[i]]))
+    }
+  }
+  names(module_keep_plain) <- nn
+  #list(Stat_all = Stat_all, module_keep = module_keep, proportion = proportion)
+  proportion_matrix=proportion[[1]]
+  for (i in 2:length(proportion)) {
+    proportion_matrix=rbind(proportion_matrix,proportion[[i]])
+  }
+  proportion_matrix=t(proportion_matrix)
+  
+  
+  list(predict_p = proportion_matrix,sig_gene_list = module_keep_plain)
+  #return(list(SigMat=predict_sig, ProMat=proportion, mk_gene=module_keep))
 }
 
 
