@@ -317,8 +317,8 @@ SSMD <- function(data11,tissue) {
   proportion_matrix=t(proportion_matrix)
   
   
-  list(predict_p = proportion_matrix,sig_gene_list = module_keep_plain)
-  #return(list(SigMat=predict_sig, ProMat=proportion, mk_gene=module_keep))
+  #list(predict_p = proportion_matrix,sig_gene_list = module_keep_plain)
+  return(list(SigMat=NA, ProMat=proportion_matrix, mk_gene=module_keep_plain))
 }
 
 
