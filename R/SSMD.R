@@ -351,6 +351,3 @@ SSMD <- function(data11,tissue) {
   #list(predict_p = proportion_matrix,sig_gene_list = module_keep_plain)
   return(list(SigMat=sig_matrix, ProMat=Prop, mk_gene=module_keep_plain,Escore_vector=NA))
 }
-
-
-aaa=SSMD(data11,tissue)
