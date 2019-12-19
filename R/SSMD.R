@@ -62,6 +62,51 @@ SSMD <- function(data11,tissue) {
   ############################
   
   # caculate the base in selected list
+  Compute_Rbase_SVD_addSigMat <- function (bulk_data, tg_R1_lists_selected) 
+  { 
+    SSMD_module_keep_gene=c()
+    for (j in 1:length(tg_R1_lists_selected)) {
+      SSMD_module_keep_gene=c(SSMD_module_keep_gene,tg_R1_lists_selected[[j]])
+    }
+    SSMD_module_keep_gene=unique(SSMD_module_keep_gene)
+    
+    tg_R1_lists_st_ccc <- tg_R1_lists_selected
+    data_c <- bulk_data
+    Base_all <- c()
+    each_module_length <- length(tg_R1_lists_st_ccc[[1]]) #assume every module has same length
+    module_size <- length(tg_R1_lists_st_ccc)
+    Sig_all <- matrix(0, length(SSMD_module_keep_gene), module_size)
+    rownames(Sig_all)=SSMD_module_keep_gene
+    gene_all <- c()
+    for (i in 1:length(tg_R1_lists_st_ccc)) {
+      tg_data_c <- data_c[tg_R1_lists_st_ccc[[i]], ]
+      gene_all <- c(gene_all, tg_R1_lists_st_ccc[[i]])
+      svd_result <- svd(tg_data_c)
+      cc <- svd_result$v[, 1]
+      ss <- svd_result$u[, 1] * svd_result$d[1] # u[,1]* d_max
+      ccc <- cor(cc, t(tg_data_c))
+      if (mean(ccc) < 0) {
+        cc <- -cc
+        ss <- -ss
+      }
+      Base_all <- rbind(Base_all, cc)
+      Sig_all[tg_R1_lists_st_ccc[[i]], i] <- ss 
+    }
+    
+    rownames(Base_all) <- 1:nrow(Base_all)
+    if (length(names(tg_R1_lists_selected)) > 1) {
+      rownames(Base_all) <- names(tg_R1_lists_selected)
+      colnames(Base_all)=colnames(bulk_data)
+    }
+    #Base_all=t(Base_all)
+    
+    #rownames(Sig_all) <- gene_all
+    colnames(Sig_all) <- names(tg_R1_lists_st_ccc)
+    
+    return(list(Base_all=Base_all, Sig_all=Sig_all)) # Prop, Signature 
+  }
+  
+  
   Compute_Rbase_SVD <- function(bulk_data, tg_R1_lists_selected) {
     tg_R1_lists_st_ccc <- tg_R1_lists_selected
     data_c <- bulk_data
@@ -274,28 +319,6 @@ SSMD <- function(data11,tissue) {
     j = j + 1
   }
   #module_keep[sapply(module_keep, is.null)] = NULL
-  
-  
-  # aaa <- Compute_Rbase_SVD(data11, module_keep) get propotion for selected modules
-  proportion = vector("list")
-  for (i in 1:length(module_keep)) {
-    # name=colnames(marker_stats1_uni)[i] print(name)
-    if (length(module_keep[[i]]) > 0) {
-      my_list <- list()
-      my_list <- module_keep[[i]]
-      ###### aaa is base: estimated propotion
-      aaa <- Compute_Rbase_SVD(data11, my_list)
-      colnames(aaa)=colnames(data11)
-      #rownames(aaa) = sapply(rownames(aaa), function(y) strsplit(y, split = "_")[[1]])
-      proportion[[i]] = aaa
-      names(proportion)[i] = sapply(rownames(aaa), function(y) strsplit(y, split = "_")[[1]][[1]])
-      # dim(aaa) dim(tProp) correlation between estimated and true propotion ccc <- cor(t(aaa),t(tProp)) modules_cor_tPro[[i]]=ccc print(ccc)
-    } else {
-      print("NO Marker")
-    }
-  }
-  
-  
   module_keep_plain <- list()
   nn <- c()
   N <- 0
@@ -309,17 +332,25 @@ SSMD <- function(data11,tissue) {
     }
   }
   names(module_keep_plain) <- nn
+  
+  # aaa <- Compute_Rbase_SVD(data11, module_keep) get propotion for selected modules
+  combine_uv <- Compute_Rbase_SVD_addSigMat(data11, module_keep_plain)
+  Prop <- combine_uv[[1]]
+  sig_matrix <- combine_uv[[2]]
+  
+  
+
   #list(Stat_all = Stat_all, module_keep = module_keep, proportion = proportion)
-  proportion_matrix=proportion[[1]]
-  for (i in 2:length(proportion)) {
-    proportion_matrix=rbind(proportion_matrix,proportion[[i]])
-  }
-  proportion_matrix=t(proportion_matrix)
+  # proportion_matrix=proportion[[1]]
+  # for (i in 2:length(proportion)) {
+  #   proportion_matrix=rbind(proportion_matrix,proportion[[i]])
+  # }
+  # proportion_matrix=t(proportion_matrix)
   
   
   #list(predict_p = proportion_matrix,sig_gene_list = module_keep_plain)
-  return(list(SigMat=NA, ProMat=proportion_matrix, mk_gene=module_keep_plain))
+  return(list(SigMat=sig_matrix, ProMat=Prop, mk_gene=module_keep_plain,Escore_vector=NA))
 }
 
 
-
+aaa=SSMD(data11,tissue)

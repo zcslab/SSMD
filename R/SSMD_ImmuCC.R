@@ -60,7 +60,7 @@ SSMD_ImmuCC <- function(data11) {
   LM <- cal_Zscore_small(predict_sig)
   sig_gene_list <- find_1_genelist(LM)
   
-  return(list(SigMat=predict_sig, ProMat=predict_p, mk_gene=sig_gene_list))
+  return(list(SigMat=predict_sig, ProMat=t(predict_p), mk_gene=sig_gene_list,Escore_vector=NA))
   
 }
 
