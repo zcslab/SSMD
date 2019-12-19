@@ -31,5 +31,9 @@ my_EPIC <- function(data11,tissue){
   LM <- cal_Zscore_small(predict_sig)
   sig_gene_list <- find_1_genelist(LM)
   
-  return(list(SigMat=predict_sig, ProMat=t(predict_p), mk_gene=sig_gene_list,Escore_vector=NA))
+  #E-Score
+  e_mat <- cal_escore(predict_sig, t(predict_p), data11)
+  return(list(SigMat=predict_sig, ProMat=t(predict_p), mk_gene=sig_gene_list,Escore_vector=e_mat))
+  
+
 }
