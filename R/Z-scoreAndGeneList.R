@@ -41,6 +41,23 @@ find_1_genelist <- function(aaa) # aaa is the LM (0 and 1)
   return(gene_list)
 }
 
+do_nnlr_regression_s <- function(XX, YY)
+{
+  #YY is m*n matrix
+  #XX is m*k matrix
+  #return SS is k*n matrix
+  library(nnls)
+  SS <- matrix(0, nrow(YY), nrow(XX))
+  for(i in 1:nrow(YY))
+  {
+    y <- YY[i, ]
+    s <- nnls(t(XX),y)$x
+    SS[i, ] <- s
+  }
+  
+  return(SS)
+}
+
 SSMD_cal_escore <- function(sigmatrix, predict_propor, bulk)
 {
   common_nn <- intersect(rownames(sigmatrix), rownames(bulk))
