@@ -348,7 +348,7 @@ SSMD <- function(data11,tissue) {
   # proportion_matrix=t(proportion_matrix)
   
   #E-Score
-  e_mat <- cal_escore(sig_matrix, Prop, data11)
+  e_mat <- SSMD_cal_escore(sig_matrix, Prop, data11)
   #list(predict_p = proportion_matrix,sig_gene_list = module_keep_plain)
   return(list(SigMat=sig_matrix, ProMat=Prop, mk_gene=module_keep_plain,Escore_vector=e_mat))
 }

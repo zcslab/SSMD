@@ -41,5 +41,17 @@ find_1_genelist <- function(aaa) # aaa is the LM (0 and 1)
   return(gene_list)
 }
 
+SSMD_cal_escore <- function(sigmatrix, predict_propor, bulk)
+{
+  common_nn <- intersect(rownames(sigmatrix), rownames(bulk))
+  bulk00 <- bulk[common_nn,]
+  #calculate true sigmatrix
+  uuu <- do_nnlr_regression_s(predict_propor, bulk00)
+  bulk_tilde <- uuu %*% predict_propor
+  escore_gene <- R2_two_mat(bulk_tilde, bulk00)
+  rownames(escore_gene) <- rownames(bulk00)
+  return(escore_gene)
+}
+
 
 

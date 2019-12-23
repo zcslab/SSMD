@@ -17,7 +17,7 @@ ImmuCC <- function(data11){
   sig_gene_list <- find_1_genelist(LM)
   
   #E-Score
-  e_mat <- cal_escore(predict_sig, t(predict_p), data11)
+  e_mat <- SSMD_cal_escore(predict_sig, t(predict_p), data11)
   #list(predict_p = proportion_matrix,sig_gene_list = module_keep_plain)
   return(list(SigMat=predict_sig, ProMat=t(predict_p), mk_gene=sig_gene_list,Escore_vector=e_mat))
   
